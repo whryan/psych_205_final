@@ -218,9 +218,9 @@ prop.table(table (results > actual_mean_diff))
 # From the summary  of yourthe model, what is the new difference in Fertility between the two groups?.
 # Explain the difference with the analysis performed in 3.4
 
-swiss_m2 = lm(Fertility ~ Agriculture + Examination + Education + Infant.Mortality + Religion, data=swiss)
+swiss_mfull = lm(Fertility ~ Agriculture + Examination + Education + Infant.Mortality + Religion, data=swiss)
 
-summary(swiss_m2)
+summary(swiss_mfull)
 #Coefficients:
 #                    Estimate Std. Error t value Pr(>|t|)    
 # (Intercept)      73.57310   11.62576   6.328 1.48e-07 ***
@@ -250,7 +250,7 @@ summary(swiss_m2)
 # whether that difference in prediction could have been obtained with random groups of similar sizes.
 
 
- 
+ #TODO: Figure out how to do this
  
  
  
@@ -261,6 +261,34 @@ summary(swiss_m2)
 # Perform a significance test for the model comparison in R, then replicate
 # this result by  and calculatinge the F value and p value "by hand" (i.e.,, 
 # meaning from the correct sum of square errors and degrees of freedom)
+
+swiss_med = lm(Fertility ~ Religion + Examination + Education, data=swiss)
+summary(swiss_med)
+#Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)  84.8357     3.0311  27.988  < 2e-16 ***
+#ReligionP    -6.3011     3.7038  -1.701  0.09612 .  
+#Examination  -0.1861     0.3149  -0.591  0.55766    
+#Education    -0.7047     0.2120  -3.324  0.00182 ** 
+
+#Residual standard error: 8.794 on 43 degrees of freedom
+#Multiple R-squared:  0.5367,	Adjusted R-squared:  0.5043 
+#F-statistic:  16.6 on 3 and 43 DF,  p-value: 2.605e-07
+
+(anova(swiss_mfull, swiss_med))
+
+#Analysis of Variance Table
+# Model 1: Fertility ~ Agriculture + Examination + Education + Infant.Mortality + 
+#  Religion
+#Model 2: Fertility ~ Religion + Examination + Education
+
+#Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+#1     41 2362.4                                  
+#2     43 3325.8 -2    -963.4 8.3602 0.0009012 ***
+
+
+#TODO: This question
+
 
 
 #################################################################.
