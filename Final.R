@@ -293,7 +293,6 @@ summary(swiss_med)
 
 #################################################################.
 
-
 # Problem 4.  Zebra finch call types.
 #################################################################
 # Load the data - 
@@ -307,8 +306,6 @@ finch <- read.csv("C:/Users/User/Dropbox/Drive Sync/Berkeley Post Bac/Spring 201
 # Question 4.1.  
 # Perform an analysis to determine whether the three types of calls 
 # can be distinguished based on their acoustical parameters.  How many dimensions are significant? 
-
-
 
 
 # Question 4.2. 
