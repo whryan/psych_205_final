@@ -40,15 +40,37 @@ View(Person)
 # of the interaction between ethnicity and gender. 
 # Comment on what you observe.
 
+boxplot(person$BFIO ~ person$sexF*person$ethF)
+boxplot(person$BFIE ~ person$sexF*person$ethF)
 
+interaction.plot(person$sexF,person$ethF, person$BFIO)
+interaction.plot(person$sexF,person$ethF, person$BFIE)
 
 # Question 1.2 
-# For each personality trait, fit a model and perform the appropriate test to determine whether gender, ethnicity and their interaction affect a participant’s scale score on the trait. 
+# For each personality trait, fit a model and perform the appropriate test to determine whether gender, ethnicity and their interaction affect a participant's scale score on the trait. 
 # Note: For this question you should fit 5 separate models rather than grouping the DVs into a single variable.
 # Make sure to include the following as comments in your R code:
 #   a. Specify the name of the statistical test as you would report in a paper.
 #   b. Summarize the results in a couple of sentences.
 
+#These are two way ANOVAs (they are comparing a continuous DV 
+# vs the interaction between two categorical, inependant groups)
+lm_e = lm(BFIE ~ sexF*ethF, data=person)
+summary(lm_e)
+
+lm_a = lm(BFIA ~ sexF*ethF, data=person)
+summary(lm_a)
+
+lm_ic = lm(BFIC ~ sexF*ethF, data=person)
+summary(lm_ic)
+
+lm_in = lm(BFIN ~ sexF*ethF, data=person)
+summary(lm_in)
+
+lm_io = lm(BFIO ~ sexF*ethF, data=person)
+summary(lm_io)
+
+#TODO: ADD INTERPRETATION FOR THIS
 
 # Question 1.3.  
 # Are there correlations between the scale scores for the five traits in the personality test? In theory, these should be small. 
@@ -56,10 +78,16 @@ View(Person)
 # Note: You will have to deal with missing datavalues!.  Use the help for the "cor" function to determine good options.
 # Write a couple of concluding sentences, describing the results and stating what might be an alternative to the 5 tests.
 
+#Subset to just the scale scores
+scale_only = (person[,47:51])
 
- 
- 
-
+cor(scale_only, use="na.or.complete")
+#         BFIE        BFIA       BFIC        BFIO        BFIN
+#BFIE  1.00000000  0.03851062  0.1379402  0.14129299 -0.25842476
+#BFIA  0.03851062  1.00000000  0.3306293  0.30089556 -0.32864909
+#BFIC  0.13794023  0.33062931  1.0000000  0.21728708 -0.30927625
+#BFIO  0.14129299  0.30089556  0.2172871  1.00000000 -0.00524156
+#BFIN -0.25842476 -0.32864909 -0.3092762 -0.00524156  1.00000000
 
 
 ################################################################
@@ -69,6 +97,9 @@ View(Person)
 # are not only eating less but exercising more.
  
 View(Blackmore)  # Warning on old versions of car this data set is Blackmoor - change if it does not work for you
+bmore = Blackmore
+
+
 # The Blackmore dataframe has the the number of hours per week of exercise (exercise)
 # for different subjects (subject), taken repeatidly at different ages (age).
 # The subjects are divided into 'control' and 'patient' (group). 
