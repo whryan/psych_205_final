@@ -171,8 +171,8 @@ scatterplotMatrix(~ Fertility + Agriculture + Examination + Education + Catholic
 # counties? You should calculate this difference directly from the data. 
 # Summarize your results in a single sentence.
 
-lm_simp_FR = lm(Fertility ~ Religion, data=swiss)
-summary(lm_simp_FR)
+swiss_m1 = lm(Fertility ~ Religion, data=swiss)
+summary(swiss_m1)
 #lm(formula = Fertility ~ Religion, data = swiss)
 
 #Coefficients:
@@ -186,7 +186,7 @@ summary(lm_simp_FR)
 #Multiple R-squared:  0.1623,	Adjusted R-squared:  0.1436 
 #F-statistic: 8.716 on 1 and 45 DF,  p-value: 0.004998
 
-mean(swiss$Fertility[swiss$Religion=="C"]) - mean(swiss$Fertility[swiss$Religion=="P"])
+actual_mean_diff = mean(swiss$Fertility[swiss$Religion=="C"]) - mean(swiss$Fertility[swiss$Religion=="P"])
 
 #Catholic countries have a mean 10 higher than protestant countries.
 #This difference is confirmed significant by an lm with fertility as DV and
@@ -199,8 +199,18 @@ mean(swiss$Fertility[swiss$Religion=="C"]) - mean(swiss$Fertility[swiss$Religion
 # difference in Fertility between Protestant and Catholic counties using 1000 permutated subsamples of the original data. 
 # Compare the p-value calculated for your permutation test to the p-value you obtained in 3.3
 
+f = swiss$Fertility
 
- 
+results = 1:1000
+
+for(i in range(1,1000)){
+  fake_religion = sample(swiss$Religion, replace=FALSE)
+  permuted_mean = mean(f[fake_religion=="C"]) - mean(f[fake_religion=="P"])
+  results[i] = permuted_mean
+}
+
+prop.table(table (results > actual_mean_diff))
+#P value of .011, which is somewhat higher than the .005 p value found before
  
 # Question 3.5
 # Test again for the effect of Religion on Fertility but this time
@@ -208,10 +218,29 @@ mean(swiss$Fertility[swiss$Religion=="C"]) - mean(swiss$Fertility[swiss$Religion
 # From the summary  of yourthe model, what is the new difference in Fertility between the two groups?.
 # Explain the difference with the analysis performed in 3.4
 
+swiss_m2 = lm(Fertility ~ Agriculture + Examination + Education + Infant.Mortality + Religion, data=swiss)
 
- 
- 
- 
+summary(swiss_m2)
+#Coefficients:
+#                    Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)      73.57310   11.62576   6.328 1.48e-07 ***
+#  Agriculture      -0.15718    0.07447  -2.111 0.040953 *  
+#  Examination      -0.37581    0.27934  -1.345 0.185915    
+#  Education        -0.79949    0.19813  -4.035 0.000232 ***
+#  Infant.Mortality  1.16404    0.40361   2.884 0.006229 ** 
+#  ReligionP        -6.00889    3.30560  -1.818 0.076408 .  
+#---
+#  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#Residual standard error: 7.591 on 41 degrees of freedom
+#Multiple R-squared:  0.6709,	Adjusted R-squared:  0.6308 
+#F-statistic: 16.72 on 5 and 41 DF,  p-value: 5.531e-09
+
+#Religion is now only marginally significant. This sort of makes sense
+# if we think that there was an interaction and a third variable actually
+#explained things better
+
+#TODO: Figure out if this was right
  
 # Question 3.6
 # Perform a second permutation analysis to test the average difference in Fertility 
