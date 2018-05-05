@@ -8,6 +8,9 @@ library(car)
 library(nlme)
 library(lme4)
 library(MASS)
+ 
+ #optional
+library(Hmisc) #I use this for the describe() function
 
 ################################################################
 # Problem 1. Personality Problems?
@@ -89,6 +92,7 @@ cor(scale_only, use="na.or.complete")
 #BFIO  0.14129299  0.30089556  0.2172871  1.00000000 -0.00524156
 #BFIN -0.25842476 -0.32864909 -0.3092762 -0.00524156  1.00000000
 
+#TODO: Add a summary sentence or two
 
 ################################################################
 # Problem 2.  Exercise, Anarexia and Age
@@ -98,7 +102,7 @@ cor(scale_only, use="na.or.complete")
  
 View(Blackmore)  # Warning on old versions of car this data set is Blackmoor - change if it does not work for you
 bmore = Blackmore
-
+describe(bmore)
 
 # The Blackmore dataframe has the the number of hours per week of exercise (exercise)
 # for different subjects (subject), taken repeatidly at different ages (age).
@@ -107,8 +111,7 @@ bmore = Blackmore
 
 # Question 2.1.  
 # Use a scatter plot to display exercise as a function of age and using different symbols for control and patient.
-
-
+scatterplot(exercise ~ age | group, data=bmore)
  
 
 # Question 2.2. 
@@ -117,8 +120,8 @@ bmore = Blackmore
 # into account the effect of age. 
 # In a short sentence state your conclusion
 
+#TODO: This exercise, need to figure out how to specify this model
 
- 
  
 # Question 2.3.  
 # On the same plot from 2.1, draw the two curves obtained from your
@@ -132,6 +135,8 @@ bmore = Blackmore
 # Fertility in transition.
 # view the data set.
 View(swiss)
+describe(swiss)
+
 # This data contains fertility rates (Fertility) in 47 counties in Switzerland in 1888 at
 # a time of transition (to a more developped and industrialized economy country).  The variable Agriculture contains the 
 # percentage % of Swiss males (no female data was collected for this dataset :-( ) involved in agriculture, and Examination and Education are two measures of
@@ -141,7 +146,7 @@ View(swiss)
 # Question 3.1.  
 # Use a scatter plot matrix to visualize how Fertility is 
 # affected by all the other variables.
-
+scatterplotMatrix(~ Fertility + Agriculture + Examination + Education + Catholic + Infant.Mortality, data=swiss)
 
  
  
@@ -151,9 +156,9 @@ View(swiss)
 # make a new categorical variable "Religion" that is 'C' when
 # Catholic is greater than 50% and 'P' otherwise.  Generate a new scatter plot
 # matrix that separates the data between Catholic and Protestants (different slopes for different folks!)
+swiss$Religion = ifelse(swiss$Catholic>50, 'C','P')
 
-
- 
+scatterplotMatrix(~ Fertility + Agriculture + Examination + Education + Catholic + Infant.Mortality | Religion, by.group=TRUE, data=swiss) 
  
 # Question 3.3  
 # Is the fertility rate different in Catholic vs. Protestant counties?
@@ -166,10 +171,28 @@ View(swiss)
 # counties? You should calculate this difference directly from the data. 
 # Summarize your results in a single sentence.
 
+lm_simp_FR = lm(Fertility ~ Religion, data=swiss)
+summary(lm_simp_FR)
+#lm(formula = Fertility ~ Religion, data = swiss)
 
- 
- 
- 
+#Coefficients:
+#  Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)   76.461      2.725  28.063   <2e-16 ***
+#  ReligionP    -10.240      3.469  -2.952    0.005 ** 
+#  ---
+#  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#Residual standard error: 11.56 on 45 degrees of freedom
+#Multiple R-squared:  0.1623,	Adjusted R-squared:  0.1436 
+#F-statistic: 8.716 on 1 and 45 DF,  p-value: 0.004998
+
+mean(swiss$Fertility[swiss$Religion=="C"]) - mean(swiss$Fertility[swiss$Religion=="P"])
+
+#Catholic countries have a mean 10 higher than protestant countries.
+#This difference is confirmed significant by an lm with fertility as DV and
+#religion as DV (ie an Anova)
+#And, this difference is significant as shown by the significant p value of the
+#Coefficient for religion
 
 # Question 3.4
 # Perform a permutation analysis to calculate obtain a p-value for the average 
