@@ -20,7 +20,7 @@ library(Hmisc) #I use this for the describe() function
 person <- read.csv("C:/Users/User/Dropbox/Drive Sync/Berkeley Post Bac/Spring 2018 Classes/Psych 205 - Data Analysis/Final Exam Code/ft_personality.csv")
 
 # View the data
-View(Person)
+View(person)
 
 # This is a classic dataset in personality psychology.  It has:
 #   bfi1 - bfi44: forty-four questions measuring five personality traits
@@ -395,8 +395,34 @@ mean(per_corrs)
 # and determine the percent of the variance explained by the first
 # 10 PC. You will have to deal with missing values!
 
+#Explanation http://www.sthda.com/english/wiki/print.php?id=207
 
+#Data description
 
+#   bfi1 - bfi44: forty-four questions measuring five personality traits
+#   BFIE, BFIA, BFIC, BFIN, BFIO: the average 'scale scores' for the five traits 
+#     BFIE - extraversion
+#     BFIA - agreeableness
+#     BFIC - conscientiousness
+#     BFIN - neuroticism
+#     BFIO - openness
+#     sexF: gender (M = male; F = female)
+#     ethF: ethnicity (AS = asian; W = white; L = latino; M = middle east; AA = african american; O = other)
+#     incF: family household income (different levels)
+#     ed.dadF: father's highest level of education (different levels)
+#     ed.momF: mother's highest level of education (different levels)
+names(person)
 
+person_qs = person[,c(names(person[1:44]))]
 
+person_qs = person_qs[complete.cases(person_qs),]
 
+pca_qs = princomp(person_qs, scores=TRUE)
+summary(pca_qs)
+eig = (pca_qs$sdev)^2
+var = eig*100/sum(eig)
+cumvar = cumsum(var)
+
+plot(cumvar[1:10])
+cumvar[10]
+#67% of variance is explained
