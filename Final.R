@@ -73,7 +73,10 @@ summary(lm_in)
 lm_io = lm(BFIO ~ sexF*ethF, data=person)
 summary(lm_io)
 
-#TODO: ADD INTERPRETATION FOR THIS
+#For most of these none appear to bbe significant  - none of relationships, with the exception of the intercept
+#have a significant term on  them
+#this implies that there is not a statistically signiicany interaction here
+
 
 # Question 1.3.  
 # Are there correlations between the scale scores for the five traits in the personality test? In theory, these should be small. 
@@ -92,7 +95,11 @@ cor(scale_only, use="na.or.complete")
 #BFIO  0.14129299  0.30089556  0.2172871  1.00000000 -0.00524156
 #BFIN -0.25842476 -0.32864909 -0.3092762 -0.00524156  1.00000000
 
-#TODO: Add a summary sentence or two
+# There are correlations here, but relatively few
+#Some  of the strongest correlations are  between agreeablenes  and openness, for example
+#but even here, there  is  only a .3 coefficient, which is  not  a very  high  correlation
+#one alternative to running these different correlation tests  is  to just do a  PCA 
+#Analysis and see that there are  not principle components which explain a lot of this data
 
 ################################################################
 # Problem 2.  Exercise, Anarexia and Age
@@ -112,7 +119,7 @@ describe(bmore)
 # Question 2.1.  
 # Use a scatter plot to display exercise as a function of age and using different symbols for control and patient.
 scatterplot(exercise ~ age | group, data=bmore)
- 
+
 
 # Question 2.2. 
 # Specify the right model and perform the correct test to determine whether
@@ -120,15 +127,32 @@ scatterplot(exercise ~ age | group, data=bmore)
 # into account the effect of age. 
 # In a short sentence state your conclusion
 
-#TODO: This exercise, need to figure out how to specify this model
+lm_bmore = lm(exercise ~ group*age, data=bmore)
 
-#lm(exercise ~ group*age) -- I think it might be that?!?
+summary(lm_bmore)
+#BEing a patient has a significant negative coefficient, which seems to suggest that
+#patients exercise less than healthy controls do
+#age has a positive coefficient, suggesting that older people generally exercise more
+#this coeff is also significant, though less so than the patient one
+#finally, the interaction between patient and age is significant and positive, suggesting that
+# the effet of age for patients is even more pronounced, with a higher positive slow
+
+#So older people exercise more, anorexixs exercise less all else equal, but as they age the effects of ageon exrcise are more pronounced
 
 # Question 2.3.  
 # On the same plot from 2.1, draw the two curves obtained from your
 # model. 
+scatterplot(exercise ~ age | group, data=bmore)
+abline(a=.14, b=.133)
+abline(a=(.14-4.14), b=(.13 + .47))
+#add for interactionis!!!
 
-
+#Coefficients:
+#  Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)       0.14751    0.71296   0.207   0.8361    
+#grouppatient     -4.14647    0.90140  -4.600 4.80e-06 ***
+#  age               0.13263    0.06159   2.153   0.0315 *  
+#  grouppatient:age  0.47968    0.07711   6.221 7.44e-10 ***
 
 ################################################################
 # Problem 3
@@ -241,8 +265,7 @@ summary(swiss_mfull)
 # if we think that there was an interaction and a third variable actually
 #explained things better
 
-#TODO: Figure out if this was right
- 
+
 # Question 3.6
 # Perform a second permutation analysis to test the average difference in Fertility 
 # between Catholic and Protestants counties where you now take into account all the
@@ -288,9 +311,27 @@ summary(swiss_med)
 #2     43 3325.8 -2    -963.4 8.3602 0.0009012 ***
 
 
-#TODO: This question
 
+k1 = length(swiss_med$coefficients)
+k2 = length(swiss_mfull$coefficients)
 
+n = nrow(swiss_mfull$model)
+
+# F = ((SS1-SS2)/(k2-k1))/(SS2/(n-k2))
+
+k = length(mod3$coefficients)
+
+preds2 = predict(swiss_mfull)
+preds1 =  predict(swiss_med)
+
+SS2 = sum((swiss$Fertility - preds2)^2)
+SS1 = sum((swiss$Fertility - preds1)^2)
+
+F_val = ((SS1-SS2)/(k2-k1))/(SS2/(n-k2))
+
+require(stats)
+
+pfval = 1 - pf(F_val, df1 = k2-k1, df2 = n-k2)
 
 #################################################################.
 
@@ -316,9 +357,6 @@ finch <- read.csv("C:/Users/User/Dropbox/Drive Sync/Berkeley Post Bac/Spring 201
 # Hint - use the standard plot for the model that you used and for nice colors 
 # give the optional color argument as : col = as.integer(ZFCalls$CallType)
 
-
- 
- 
 
 # Question 4.3  
 # Determine the percentage of average classification
