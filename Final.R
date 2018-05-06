@@ -350,20 +350,42 @@ finch <- read.csv("C:/Users/User/Dropbox/Drive Sync/Berkeley Post Bac/Spring 201
 # can be distinguished based on their acoustical parameters.  How many dimensions are significant? 
 
 #TODO: This should be an LDA analysis
+require(MASS)
+require(car)
+finch_lda <- lda(CallType ~ ., finch)
+finch_lda
+#Proportion of trace:
+#  LD1    LD2 
+#0.9387 0.0613 
 
+#There are two significant dimensions
+#It would appear that they can be
 
 # Question 4.2. 
 # Make a standard scatter plot showing yourthe results from 4.1
 # Hint - use the standard plot for the model that you used and for nice colors 
 # give the optional color argument as : col = as.integer(ZFCalls$CallType)
-
+plot(finch_lda,col = as.integer(finch$CallType))
 
 # Question 4.3  
 # Determine the percentage of average classification
 # using 10 cross-validation sets where 20% of the data is saved
 # each time for validation. Use a flat prior (ie. equal probability) (4pts)
 
+per_corrs = 1:10
 
+for(i in 1:10){
+  finch_lda <- lda(CallType ~ ., finch, prior = c(1,1,1)/3, subset = train)
+  percent_train = .8
+  train = sample(1:nrow(finch),floor(nrow(finch)*percent_train), replace=FALSE)
+  preds = predict(finch_lda, finch[-train, ])$class
+  actual = finch$CallType[-train]
+  per_corr = sum(preds==actual)/length(preds)
+  per_corrs[i] = per_corr
+}
+
+mean(per_corrs)
+#94% correct
 
 #################################################################
 
