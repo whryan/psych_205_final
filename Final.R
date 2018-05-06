@@ -122,7 +122,8 @@ scatterplot(exercise ~ age | group, data=bmore)
 
 #TODO: This exercise, need to figure out how to specify this model
 
- 
+#lm(exercise ~ group*age) -- I think it might be that?!?
+
 # Question 2.3.  
 # On the same plot from 2.1, draw the two curves obtained from your
 # model. 
@@ -306,6 +307,8 @@ finch <- read.csv("C:/Users/User/Dropbox/Drive Sync/Berkeley Post Bac/Spring 201
 # Question 4.1.  
 # Perform an analysis to determine whether the three types of calls 
 # can be distinguished based on their acoustical parameters.  How many dimensions are significant? 
+
+#TODO: This should be an LDA analysis
 
 
 # Question 4.2. 
